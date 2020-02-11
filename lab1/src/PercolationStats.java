@@ -69,8 +69,8 @@ public class PercolationStats {
 
     // test client (see below)
     public static void main(String[] args) {
-//        PercolationStats percolationStats = new PercolationStats(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-        PercolationStats percolationStats = new PercolationStats(20, 10);
+        PercolationStats percolationStats = new PercolationStats(Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+//        PercolationStats percolationStats = new PercolationStats(20, 10);
         double mean = percolationStats.mean();
         double stddev = percolationStats.stddev();
         double lo = percolationStats.confidenceLo();

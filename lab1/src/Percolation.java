@@ -10,7 +10,7 @@ public class Percolation {
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
-        if (n < 0) throw new IllegalArgumentException("n need to be positive");
+        if (n <= 0) throw new IllegalArgumentException("n need to be positive");
 
         gridHeight = n;
         grid = new boolean[gridHeight][gridHeight];
@@ -25,7 +25,6 @@ public class Percolation {
         // n - virtual top site
         // n + 1 - virtual bottom site
         uf = new WeightedQuickUnionUF(gridSize + 2);
-        if (n == 1) return;
         for (int i = 0; i < gridHeight; i++) {
             uf.union(gridSize, i);
         }
@@ -72,7 +71,7 @@ public class Percolation {
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         if (!siteExist(row, col)) throw new IllegalArgumentException("site (" + row + ", " + col + ") is out of a grid");
-        return uf.find(gridSize) == uf.find(toIndex(row, col));
+        return uf.find(gridSize) == uf.find(toIndex(row, col)) && isOpen(row, col);
     }
 
     // returns the number of open sites
@@ -123,5 +122,14 @@ public class Percolation {
         p.open(8, 6);
 
         System.out.println(p.percolates());
+
+        Percolation p2 = new Percolation(3);
+        p2.open(1,3);
+        p2.open(2,3);
+        p2.open(3,3);
+        p2.open(3,1);
+        p2.open(2,1);
+        p2.open(1,1);
+        System.out.println(p2.isFull(3, 1));
     }
 }
