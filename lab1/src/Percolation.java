@@ -7,6 +7,7 @@ public class Percolation {
     private final int gridSize;
     private int openSites;
     private final WeightedQuickUnionUF uf;
+    private final WeightedQuickUnionUF ufWithoutBottom;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
@@ -22,11 +23,13 @@ public class Percolation {
             }
         }
 
-        // n - virtual top site
-        // n + 1 - virtual bottom site
+        // "gridSize" - virtual top site
+        // "gridSize + 1" - virtual bottom site
         uf = new WeightedQuickUnionUF(gridSize + 2);
+        ufWithoutBottom = new WeightedQuickUnionUF(gridSize + 1);
         for (int i = 0; i < gridHeight; i++) {
             uf.union(gridSize, i);
+            ufWithoutBottom.union(gridSize, i);
         }
         for (int i = toIndex(gridHeight, 1); i < gridSize; i++) {
             uf.union(gridSize + 1, i);
@@ -49,15 +52,19 @@ public class Percolation {
 
             if (siteExist(row - 1, col) && isOpen(row - 1, col)) {
                 uf.union(currentSiteIndex, topSiteIndex);
+                ufWithoutBottom.union(currentSiteIndex, topSiteIndex);
             }
             if (siteExist(row + 1, col) && isOpen(row + 1, col)) {
                 uf.union(currentSiteIndex, bottomSiteIndex);
+                ufWithoutBottom.union(currentSiteIndex, bottomSiteIndex);
             }
             if (siteExist(row, col - 1) && isOpen(row, col - 1)) {
                 uf.union(currentSiteIndex, leftSiteIndex);
+                ufWithoutBottom.union(currentSiteIndex, leftSiteIndex);
             }
             if (siteExist(row, col + 1) && isOpen(row, col + 1)) {
                 uf.union(currentSiteIndex, rightSiteIndex);
+                ufWithoutBottom.union(currentSiteIndex, rightSiteIndex);
             }
         }
     }
@@ -71,7 +78,7 @@ public class Percolation {
     // is the site (row, col) full?
     public boolean isFull(int row, int col) {
         if (!siteExist(row, col)) throw new IllegalArgumentException("site (" + row + ", " + col + ") is out of a grid");
-        return uf.find(gridSize) == uf.find(toIndex(row, col)) && isOpen(row, col);
+        return ufWithoutBottom.connected(gridSize, toIndex(row, col)) && isOpen(row, col);
     }
 
     // returns the number of open sites
@@ -81,7 +88,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return uf.find(gridSize) == uf.find(gridSize + 1);
+        return uf.connected(gridSize, gridSize + 1) && numberOfOpenSites() != 0;
     }
 
     // check if site(row, col) is out of grid
@@ -97,39 +104,46 @@ public class Percolation {
     // test client (optional)
     public static void main(String[] args) {
         // example from website
-        Percolation p = new Percolation(8);
-        p.open(1, 3);
-        p.open(1, 4);
-        p.open(1, 5);
-        p.open(2, 4);
-        p.open(2, 5);
-        p.open(2, 6);
-        p.open(2, 7);
-        p.open(2, 8);
-        p.open(3, 6);
-        p.open(3, 7);
-        p.open(4, 6);
-        p.open(4, 7);
-        p.open(4, 8);
-        p.open(5, 6);
-        p.open(5, 7);
-        p.open(6, 7);
-        p.open(6, 8);
-        p.open(7, 5);
-        p.open(7, 6);
-        p.open(7, 7);
-        p.open(7, 8);
-        p.open(8, 6);
-
-        System.out.println(p.percolates());
-
-        Percolation p2 = new Percolation(3);
-        p2.open(1,3);
-        p2.open(2,3);
-        p2.open(3,3);
-        p2.open(3,1);
-        p2.open(2,1);
-        p2.open(1,1);
-        System.out.println(p2.isFull(3, 1));
+//        Percolation p = new Percolation(8);
+//        p.open(1, 3);
+//        p.open(1, 4);
+//        p.open(1, 5);
+//        p.open(2, 4);
+//        p.open(2, 5);
+//        p.open(2, 6);
+//        p.open(2, 7);
+//        p.open(2, 8);
+//        p.open(3, 6);
+//        p.open(3, 7);
+//        p.open(4, 6);
+//        p.open(4, 7);
+//        p.open(4, 8);
+//        p.open(5, 6);
+//        p.open(5, 7);
+//        p.open(6, 7);
+//        p.open(6, 8);
+//        p.open(7, 5);
+//        p.open(7, 6);
+//        p.open(7, 7);
+//        p.open(7, 8);
+//        p.open(8, 6);
+//        System.out.println(p.percolates());
+//
+//        Percolation p2 = new Percolation(3);
+//        p2.open(1, 3);
+//        p2.open(2, 3);
+//        p2.open(3, 3);
+//        p2.open(3, 1);
+//        p2.open(2, 1);
+//        p2.open(1, 1);
+//        System.out.println(p2.isFull(3, 1));
+//
+//        System.out.println("...");
+//        Percolation p3 = new Percolation(1);
+//        System.out.println(p3.isFull(1, 1));
+//        System.out.println(p3.percolates());
+//        p3.open(1, 1);
+//        System.out.println(p3.isFull(1, 1));
+//        System.out.println(p3.percolates());
     }
 }
